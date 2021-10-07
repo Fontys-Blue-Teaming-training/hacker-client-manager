@@ -1,12 +1,28 @@
 ﻿using System;
+using websocket_client;
+using System.Threading.Tasks;
+using WatsonWebsocket;
+using System.Text.RegularExpressions;
 
 namespace hacker_script_manager
 {
-    class Program
+     public class Program
     {
-        static void Main(string[] args)
+
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            
+            SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>());
+            HackerMessageHandler<ScenarioMessage> hh = new HackerMessageHandler<ScenarioMessage>();
+            Console.WriteLine("Setting up client");
+            sc.InitClient();
+            await sc.StartClient();
+            Console.Write("Client started");
+            Console.ReadLine();
+             
+
         }
+
+        
     }
 }
