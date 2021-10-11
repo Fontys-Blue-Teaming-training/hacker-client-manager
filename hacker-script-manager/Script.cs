@@ -1,30 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace hacker_script_manager
 {
-    abstract class Script
+    public abstract class Script
     {
-    
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public abstract List<String> Actualmessages { get; }
-
-        public abstract List<String> Outputs { get; }
-
-        public abstract List<String> MatchesToSend { get; }
-
-        public abstract void Start_Script();
-
-        public abstract void ShowMatch(string text, string expr);
-
-
-
-
-
-
-
+        public List<string> Outputs { get; set; } = new List<string>();
+        public abstract void StartScript();
     }
 }
