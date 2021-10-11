@@ -13,7 +13,6 @@ namespace hacker_script_manager
         {
             
             SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>());
-            HackerMessageHandler<ScenarioMessage> hh = new HackerMessageHandler<ScenarioMessage>();
             Console.WriteLine("Setting up client");
             sc.InitClient();
             await sc.StartClient();

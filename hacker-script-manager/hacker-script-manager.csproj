@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Reference Include="websocket-client">
-      <HintPath>..\..\websocket-client\websocket-client\obj\Release\netcoreapp3.1\websocket-client.dll</HintPath>
+      <HintPath>..\..\websocket-client\websocket-client\bin\Debug\netcoreapp3.1\websocket-client.dll</HintPath>
     </Reference>
   </ItemGroup>
 

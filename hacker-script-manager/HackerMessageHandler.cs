@@ -5,18 +5,14 @@ using System.Text;
 using websocket_client;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace hacker_script_manager
 {
     public class HackerMessageHandler<T> : MessageHandler<T> where T : ScenarioMessage
     {
-       
-
-        List<string> outputs = new List<string>();
         public List<string> matchesToSend = new List<string>();
-        ScenarioMessage m;
         PingScript pi = new PingScript();
-        HydraScript hp = new HydraScript();
 
         public override void HandleMessage(string message)
         {
@@ -24,23 +20,13 @@ namespace hacker_script_manager
             ScenarioMessage m = bla;
             Console.WriteLine(message);
             Console.WriteLine("------------");
-            //Anal_Message(m);
-            //SendSomething();
-            Task.Run(() => Anal_Message(m));
+            Thread t = new Thread(() => Anal_Message(m));
+            t.Start();
+            Task.Run(() => SendSomething());
             
-           // Task.Run(() => SendSomething());
         }
 
-       
-
-        public ScenarioMessage returnMessageObject()
-        {
-            return m;
-        }
-
-
-
-        public async void Anal_Message(ScenarioMessage m)
+        public async Task Anal_Message(ScenarioMessage m)
         {
             if(m != null)
             {
@@ -49,18 +35,7 @@ namespace hacker_script_manager
                    if(m.Scenario == Scenarios.LINUX_SSH_ATTACK)
                     {
                         Console.Write("Linux SSH attack is starting");
-                        // Script ping = new Script(2, "ping", @"C:\Users\31640\Desktop\test.bat", "", @"\bt\S*");
-
-                        //PingScript p = new PingScript();
-                        hp.Start_Script();
-                        foreach(var a in hp.Actualmessages)
-                        {
-                            var x = a;
-                            SendMessage(x);
-                            Console.WriteLine(x);
-                       
-                        } 
-
+                        pi.Start_Script();
                     }
                     else
                     {
@@ -79,32 +54,18 @@ namespace hacker_script_manager
             
         }
 
-     
-      /*
-
-        public async void SendSomething()
+        public async Task SendSomething()
         {
-            //  await Task.Delay(1000);
-
-            await Task.Delay(3000);
-            while (true)
+            int hasRan = 0;
+            while(true)
             {
-                
-                foreach (string a in pi.Actualmessages)
+                if(pi.outputs.Count > hasRan)
                 {
-                    string b = a;
-                    pi.Actualmessages.Remove(a);
-                    await SendMessage(b);
-                    
+                    await SendMessage(pi.outputs[hasRan]);
+                    hasRan++;
+                }
 
-                } 
             }
-           
-
-            
-           
         }
-      */
-
     }
 }
