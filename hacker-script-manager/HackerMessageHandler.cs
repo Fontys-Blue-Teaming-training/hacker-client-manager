@@ -15,6 +15,8 @@ namespace hacker_script_manager
         List<string> outputs = new List<string>();
         public List<string> matchesToSend = new List<string>();
         ScenarioMessage m;
+        PingScript pi = new PingScript();
+        HydraScript hp = new HydraScript();
 
         public override void HandleMessage(string message)
         {
@@ -22,10 +24,14 @@ namespace hacker_script_manager
             ScenarioMessage m = bla;
             Console.WriteLine(message);
             Console.WriteLine("------------");
-            Anal_Message(m);
+            //Anal_Message(m);
+            //SendSomething();
+            Task.Run(() => Anal_Message(m));
+            
+           // Task.Run(() => SendSomething());
         }
 
-
+       
 
         public ScenarioMessage returnMessageObject()
         {
@@ -34,7 +40,7 @@ namespace hacker_script_manager
 
 
 
-        public void Anal_Message(ScenarioMessage m)
+        public async void Anal_Message(ScenarioMessage m)
         {
             if(m != null)
             {
@@ -43,8 +49,17 @@ namespace hacker_script_manager
                    if(m.Scenario == Scenarios.LINUX_SSH_ATTACK)
                     {
                         Console.Write("Linux SSH attack is starting");
-                        Script ping = new Script(2, "ping", @"C:\Users\31640\Desktop\test.bat", "", @"\bt\S*");
-                        Start_Script(ping);
+                        // Script ping = new Script(2, "ping", @"C:\Users\31640\Desktop\test.bat", "", @"\bt\S*");
+
+                        //PingScript p = new PingScript();
+                        hp.Start_Script();
+                        foreach(var a in hp.Actualmessages)
+                        {
+                            var x = a;
+                            SendMessage(x);
+                            Console.WriteLine(x);
+                       
+                        } 
 
                     }
                     else
@@ -64,57 +79,32 @@ namespace hacker_script_manager
             
         }
 
-        public void ShowMatch(string text, string expr)
+     
+      /*
+
+        public async void SendSomething()
         {
-            MatchCollection mc = Regex.Matches(text, expr);
-            foreach (Match m in mc)
+            //  await Task.Delay(1000);
+
+            await Task.Delay(3000);
+            while (true)
             {
-                Console.WriteLine(m);  //ater this here we should send it to the server maybe in a dif method but idk how
-                matchesToSend.Add(Convert.ToString(m));
-                //SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>());  //this is wrong i shouldnt create another instance but idk how to send message within this class.
-                //await sc.SendMessage(Convert.ToString(m));
-                foreach(string a in matchesToSend)
+                
+                foreach (string a in pi.Actualmessages)
                 {
-                    if (a.Contains("time"))
-                    {
-                        Console.WriteLine(a);
-                    }
-                }
+                    string b = a;
+                    pi.Actualmessages.Remove(a);
+                    await SendMessage(b);
+                    
+
+                } 
+            }
            
-            }
+
+            
+           
         }
-
-
-
-
-        public void Start_Script(Script s)
-        {
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = s.Path;
-            p.Start();
-
-            while (!p.StandardOutput.EndOfStream)
-            {
-                string output = p.StandardOutput.ReadLine();
-                Console.WriteLine(output);
-                outputs.Add(output);
-
-            }
-            foreach(string o in outputs)
-            {
-                ShowMatch(o, s.Regex);
-              
-            }
-        }
-
-        
-
-      
-
-
-      
+      */
 
     }
 }

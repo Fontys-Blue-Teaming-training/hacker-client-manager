@@ -4,29 +4,25 @@ using System.Text;
 
 namespace hacker_script_manager
 {
-    public class Script
+    abstract class Script
     {
-        private int id;
-        private string name;
-        private string path;
-        private string command;
-        private string regex;
+    
+        public int Id { get; set; }
+        public string Name { get; set; }
 
-        public Script(int id, string name, string path, string command, string regex)
-        {
-            Id = id;
-            Name = name;
-            Command = command;
-            Regex = regex;
-            Path = path;
-        }
+        public abstract List<String> Actualmessages { get; }
 
-        public int Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
-        public string Command { get => command; set => command = value; }
-        public string Regex { get => regex; set => regex = value; }
-        public string Path { get => path; set => path = value; }
-      
+        public abstract List<String> Outputs { get; }
+
+        public abstract List<String> MatchesToSend { get; }
+
+        public abstract void Start_Script();
+
+        public abstract void ShowMatch(string text, string expr);
+
+
+
+
 
 
 
