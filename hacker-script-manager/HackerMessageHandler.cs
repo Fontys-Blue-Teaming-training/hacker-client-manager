@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using websocket_client;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -11,31 +7,25 @@ namespace hacker_script_manager
 {
     public class HackerMessageHandler<T> : MessageHandler<T> where T : ScenarioMessage
     {
-        public List<string> matchesToSend = new List<string>();
-        PingScript pi = new PingScript();
+        Script script = null;
 
         public override void HandleMessage(string message)
         {
-            var bla = ReceiveAsObj(message);
-            ScenarioMessage m = bla;
+            var scenarioMessage = ReceiveAsObj(message);
             Console.WriteLine(message);
             Console.WriteLine("------------");
-            Thread t = new Thread(() => Anal_Message(m));
-            t.Start();
-            Task.Run(() => SendSomething());
-            
-        }
 
-        public async Task Anal_Message(ScenarioMessage m)
-        {
-            if(m != null)
+            if (scenarioMessage != null)
             {
-                if(m.Action == ScenarioActions.START)
+                if (scenarioMessage.Action == ScenarioActions.START)
                 {
-                   if(m.Scenario == Scenarios.LINUX_SSH_ATTACK)
+                    if (scenarioMessage.Scenario == Scenarios.LINUX_SSH_ATTACK)
                     {
+                        script = new PingScript();
                         Console.Write("Linux SSH attack is starting");
-                        pi.Start_Script();
+                        Thread t = new Thread(() => script.StartScript());
+                        t.Start();
+                        Task.Run(() => SendOutput());
                     }
                     else
                     {
@@ -51,20 +41,18 @@ namespace hacker_script_manager
             {
                 Console.Write("No message given by server");
             }
-            
         }
 
-        public async Task SendSomething()
+        public async Task SendOutput()
         {
             int hasRan = 0;
             while(true)
             {
-                if(pi.outputs.Count > hasRan)
+                if(script.Outputs.Count > hasRan)
                 {
-                    await SendMessage(pi.outputs[hasRan]);
+                    await SendMessage(script.Outputs[hasRan]);
                     hasRan++;
                 }
-
             }
         }
     }
