@@ -5,116 +5,79 @@ using System.Text;
 using websocket_client;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace hacker_script_manager
 {
     public class HackerMessageHandler<T> : MessageHandler<T> where T : ScenarioMessage
     {
-       
 
-        List<string> outputs = new List<string>();
-        public List<string> matchesToSend = new List<string>();
-        ScenarioMessage m;
+        Script script = null; 
 
         public override void HandleMessage(string message)
         {
-            var bla = ReceiveAsObj(message);
-            ScenarioMessage m = bla;
+            var scenarioMessage = ReceiveAsObj(message);
             Console.WriteLine(message);
             Console.WriteLine("------------");
-            Anal_Message(m);
-        }
-
-
-
-        public ScenarioMessage returnMessageObject()
-        {
-            return m;
-        }
-
-
-
-        public void Anal_Message(ScenarioMessage m)
-        {
-            if(m != null)
+            if(scenarioMessage != null)
             {
-                if(m.Action == ScenarioActions.START)
+                if(scenarioMessage.Action == ScenarioActions.START)
                 {
-                   if(m.Scenario == Scenarios.LINUX_SSH_ATTACK)
+                    if(scenarioMessage.Scenario == Scenarios.LINUX_SSH_ATTACK)
                     {
+                        script = new HydraScript();
                         Console.Write("Linux SSH attack is starting");
-                        Script ping = new Script(2, "ping", @"C:\Users\31640\Desktop\test.bat", "", @"\bt\S*");
-                        Start_Script(ping);
-
+                        Thread t = new Thread(() => script.Start_Script());
+                        t.Start();
+                        Task.Run(() => SendOutput());
                     }
                     else
                     {
                         Console.Write("Other script should start");
                     }
                 }
-                else
+                else if(scenarioMessage.Action == ScenarioActions.STOP)
                 {
                     Console.Write("Message doesnt want script to start");
+                    script.Stop_Script();
                 }
             }
             else
             {
                 Console.Write("No message given by server");
             }
-            
+   
         }
 
-        public void ShowMatch(string text, string expr)
+       
+
+
+
+        public async Task SendOutput()
         {
-            MatchCollection mc = Regex.Matches(text, expr);
-            foreach (Match m in mc)
+            int hasRan = 0;
+            while (true)
             {
-                Console.WriteLine(m);  //ater this here we should send it to the server maybe in a dif method but idk how
-                matchesToSend.Add(Convert.ToString(m));
-                //SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>());  //this is wrong i shouldnt create another instance but idk how to send message within this class.
-                //await sc.SendMessage(Convert.ToString(m));
-                foreach(string a in matchesToSend)
+                if(script.Outputs.Count > hasRan)
                 {
-                    if (a.Contains("time"))
+                    InfoMessage m = new InfoMessage();
+                    m.Message = script.Outputs[hasRan];
+                    if (m.Message.Contains("#"))
                     {
-                        Console.WriteLine(a);
+                        m.Type = InfoMessageType.ERROR;
                     }
+                    else
+                    {
+                        m.Type = InfoMessageType.INFO;
+                    }
+                    await SendMessage(JsonConvert.SerializeObject(m));
+                    hasRan++;
                 }
-           
             }
         }
 
-
-
-
-        public void Start_Script(Script s)
-        {
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = s.Path;
-            p.Start();
-
-            while (!p.StandardOutput.EndOfStream)
-            {
-                string output = p.StandardOutput.ReadLine();
-                Console.WriteLine(output);
-                outputs.Add(output);
-
-            }
-            foreach(string o in outputs)
-            {
-                ShowMatch(o, s.Regex);
-              
-            }
-        }
-
-        
-
-      
-
-
-      
+     
 
     }
 }

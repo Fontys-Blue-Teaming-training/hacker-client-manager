@@ -4,31 +4,16 @@ using System.Text;
 
 namespace hacker_script_manager
 {
-    public class Script
+    abstract class Script
     {
-        private int id;
-        private string name;
-        private string path;
-        private string command;
-        private string regex;
 
-        public Script(int id, string name, string path, string command, string regex)
-        {
-            Id = id;
-            Name = name;
-            Command = command;
-            Regex = regex;
-            Path = path;
-        }
+       // public bool isInterrupting;
 
-        public int Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
-        public string Command { get => command; set => command = value; }
-        public string Regex { get => regex; set => regex = value; }
-        public string Path { get => path; set => path = value; }
-      
+        public List<String> Outputs { get; set; } = new List<string>();
 
+        public abstract void Start_Script();
 
+        public abstract void Stop_Script();
 
     }
 }
