@@ -12,7 +12,7 @@ namespace hacker_script_manager
         static async Task Main(string[] args)
         {
             
-            SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>());
+            SocketClient sc = new SocketClient(new HackerMessageHandler<ScenarioMessage>(), "172.16.1.4");
             HackerMessageHandler<ScenarioMessage> hh = new HackerMessageHandler<ScenarioMessage>();
             Console.WriteLine("Setting up client");
             sc.InitClient();
