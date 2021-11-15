@@ -1,18 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace hacker_script_manager
 {
     class PingScript : Script
     {
-
-
         private void ShowMatch(string text, string expr)
         {
-            
             MatchCollection mc = Regex.Matches(text, expr);
             foreach (Match m in mc)
             {
@@ -21,16 +16,11 @@ namespace hacker_script_manager
                 {
                     Outputs.Add(m.ToString());
                 }
-             
-
             }
-     
-          
         }
 
-        public override void Start_Script()
+        public override void StartScript()
         {
-           
             Process p = new Process();
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
@@ -41,7 +31,11 @@ namespace hacker_script_manager
             {
                 ShowMatch(p.StandardOutput.ReadLine(), @"\bt\S*");
             }
-         
+        }
+        
+        public override void StopScript()
+        {
+            throw new NotImplementedException();
         }
     }
 }

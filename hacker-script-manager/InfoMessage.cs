@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hacker_script_manager
+﻿namespace hacker_script_manager
 {
     public class InfoMessage
     {
