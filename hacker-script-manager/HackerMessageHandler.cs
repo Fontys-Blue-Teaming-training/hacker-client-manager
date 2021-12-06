@@ -23,6 +23,7 @@ namespace hacker_script_manager
                     if(scenarioMessage.Scenario == Scenarios.LINUX_SSH_ATTACK)
                     {
                         script = new HydraScript();
+                        script.Name = "SSH Bruteforcing";
                         Console.Write("Linux SSH attack is starting");
                         Thread t = new Thread(() => script.StartScript());
                         t.Start();
@@ -31,6 +32,7 @@ namespace hacker_script_manager
                     else if(scenarioMessage.Scenario == Scenarios.MALWARE)
                     {
                         script = new MalwareScript();
+                        script.Name = "Malware";
                         Console.Write("Malware executable is starting");
                         Thread t = new Thread(() => script.StartScript());
                         t.Start();
@@ -39,7 +41,7 @@ namespace hacker_script_manager
                 }
                 else if(scenarioMessage.Action == ScenarioActions.STOP)
                 {
-                    Console.Write("Linux SSH attack is stopping");
+                    Console.Write(script.Name + "attack is stopping");
                     script.StopScript();
                     b = true;
                 }

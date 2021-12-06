@@ -8,6 +8,8 @@ namespace hacker_script_manager
     {
         readonly Process p = new Process();
 
+        
+
         private void ShowMatch(string text, string expr)
         {
             MatchCollection mc = Regex.Matches(text, expr);
